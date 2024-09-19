@@ -63,6 +63,11 @@
             Include current day in calculation
         </label>
 
+        <label>
+            <input type="checkbox" id="includeTime" checked>
+            Include time in calculation
+        </label>
+
         <button type="submit">Calculate</button>
     </form>
 
@@ -76,13 +81,24 @@
     document.getElementById("dateForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const startDate = new Date(document.getElementById("startDate").value);
-        const endDate = new Date(document.getElementById("endDate").value);
+        const startDateInput = document.getElementById("startDate").value;
+        const endDateInput = document.getElementById("endDate").value;
         const includeCurrentDay = document.getElementById("includeCurrentDay").checked;
+        const includeTime = document.getElementById("includeTime").checked;
 
-        if (!startDate || !endDate) {
+        if (!startDateInput || !endDateInput) {
             alert("Please select both dates!");
             return;
+        }
+
+        // Parse the date inputs
+        const startDate = new Date(startDateInput);
+        const endDate = new Date(endDateInput);
+
+        // If time is excluded, reset time values to 00:00:00
+        if (!includeTime) {
+            startDate.setHours(0, 0, 0, 0);
+            endDate.setHours(0, 0, 0, 0);
         }
 
         // Calculate the difference in milliseconds
@@ -101,14 +117,20 @@
         const diffMonths = Math.floor(diffDays / 30); // Approximate months
         const diffYears = Math.floor(diffMonths / 12); // Approximate years
 
+        // Calculate the remainder for years, months, and days
+        const remainingMonths = diffMonths % 12;
+        const remainingDays = diffDays % 30;
+
         // Display the result
         document.getElementById("output").innerHTML = `
             <strong>${diffYears}</strong> years, 
-            <strong>${diffMonths % 12}</strong> months, 
-            <strong>${diffDays % 30}</strong> days, 
-            <strong>${diffHours % 24}</strong> hours, 
-            <strong>${diffMins % 60}</strong> minutes, 
-            <strong>${diffSecs % 60}</strong> seconds
+            <strong>${remainingMonths}</strong> months, 
+            <strong>${remainingDays}</strong> days<br><br>
+            Total months: <strong>${diffMonths}</strong><br>
+            Total days: <strong>${diffDays}</strong><br>
+            Total hours: <strong>${diffHours}</strong><br>
+            Total minutes: <strong>${diffMins}</strong><br>
+            Total seconds: <strong>${diffSecs}</strong>
         `;
 
         document.getElementById("result").style.display = "block";
