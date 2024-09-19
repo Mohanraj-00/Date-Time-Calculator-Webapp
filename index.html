@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date and Time Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, button {
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Date and Time Difference Calculator</h1>
+    <form id="dateForm">
+        <label for="startDate">Start Date:</label>
+        <input type="datetime-local" id="startDate" required>
+
+        <label for="endDate">End Date:</label>
+        <input type="datetime-local" id="endDate" required>
+
+        <label>
+            <input type="checkbox" id="includeCurrentDay">
+            Include current day in calculation
+        </label>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <div class="result" id="result" style="display:none;">
+        <h3>Result:</h3>
+        <p id="output"></p>
+    </div>
+</div>
+
+<script>
+    document.getElementById("dateForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const startDate = new Date(document.getElementById("startDate").value);
+        const endDate = new Date(document.getElementById("endDate").value);
+        const includeCurrentDay = document.getElementById("includeCurrentDay").checked;
+
+        if (!startDate || !endDate) {
+            alert("Please select both dates!");
+            return;
+        }
+
+        // Calculate the difference in milliseconds
+        let diffMs = endDate - startDate;
+
+        // Adjust if current day is to be included
+        if (includeCurrentDay) {
+            diffMs += 24 * 60 * 60 * 1000;  // Add 24 hours in milliseconds
+        }
+
+        // Convert the difference into various units
+        const diffSecs = Math.floor(diffMs / 1000);
+        const diffMins = Math.floor(diffSecs / 60);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        const diffMonths = Math.floor(diffDays / 30); // Approximate months
+        const diffYears = Math.floor(diffMonths / 12); // Approximate years
+
+        // Display the result
+        document.getElementById("output").innerHTML = `
+            <strong>${diffYears}</strong> years, 
+            <strong>${diffMonths % 12}</strong> months, 
+            <strong>${diffDays % 30}</strong> days, 
+            <strong>${diffHours % 24}</strong> hours, 
+            <strong>${diffMins % 60}</strong> minutes, 
+            <strong>${diffSecs % 60}</strong> seconds
+        `;
+
+        document.getElementById("result").style.display = "block";
+    });
+</script>
+
+</body>
+</html>
